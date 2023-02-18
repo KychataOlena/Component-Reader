@@ -1,4 +1,9 @@
 import { Component } from 'react';
+import { Controls } from './Control';
+import { Progress } from './Progress';
+import { Publication } from './Publication';
+
+const LS_KEY = 'reader_item_index';
 
 export class Reader extends Component {
   state = {
@@ -9,40 +14,36 @@ export class Reader extends Component {
     this.setState(state => ({ index: state.index + value }));
   };
 
+  componentDidMount() {
+    const saveState = localStorage.getItem(LS_KEY);
+    if (saveState) {
+      this.setState({ index: Number(saveState) });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.index !== this.state.index) {
+      localStorage.setItem(LS_KEY, this.state.index);
+    }
+  }
+
   render() {
     // console.log(this.props.items[this.state.index]);
     const { index } = this.state;
     const { items } = this.props;
-    const { totalItems } = items.length;
+    const totalItems = items.length;
     const currentItem = items[index];
 
     return (
       <div>
-        <section>
-          <button
-            type="button"
-            disabled={index === 0}
-            onClick={() => this.changeIndex(-1)}
-          >
-            Назад
-          </button>
-          <button
-            type="button"
-            disabled={index + 1 === items.length}
-            onClick={() => this.changeIndex(1)}
-          >
-            Вперед
-          </button>
-        </section>
+        <Controls
+          total={totalItems}
+          current={index + 1}
+          onChange={this.changeIndex}
+        />
 
-        <p>
-          {index + 1}/{items.length}
-        </p>
-
-        <article>
-          <h2>{currentItem.title}</h2>
-          <p>{currentItem.text}</p>
-        </article>
+        <Progress total={totalItems} current={index + 1} />
+        <Publication item={currentItem} />
       </div>
     );
   }
