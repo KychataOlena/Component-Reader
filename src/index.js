@@ -6,7 +6,7 @@ import './index.css';
 import publication from './publication.json';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    {/* <App /> */}
+    <App />
     <Reader items={publication} />
   </React.StrictMode>
 );
